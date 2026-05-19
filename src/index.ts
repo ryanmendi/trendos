@@ -8,6 +8,7 @@ import { calculateViralScore } from "./engines/viral-score.engine";
 import { analyzeTrend } from "./engines/trend-hunter.engine";
 import { sendTelegramMessage } from "./services/telegram.service";
 import { generateProductContent } from "./engines/hook-generator.engine";
+import { generateContentVariants } from "./engines/content-optimizer.engine";
 
 
 async function main() {
@@ -80,6 +81,25 @@ ranking.sort(
 console.log("\n=== RANKING FINAL ===");
 
 console.table(ranking);
+
+console.log("\n=== CONTENT OPTIMIZATION ===");
+
+const bestProduct = products[0];
+
+const variants =
+  generateContentVariants(bestProduct);
+
+console.log(
+  "\n=== TOP 5 VARIANTES ==="
+);
+
+console.table(
+  variants.slice(0, 5).map((v) => ({
+    hook: v.hook,
+    cta: v.cta,
+    score: v.predictedScore,
+  }))
+);
 
 console.log("\n=== ENVIANDO PARA TELEGRAM ===");
 
