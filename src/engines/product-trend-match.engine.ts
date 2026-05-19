@@ -9,7 +9,7 @@ export interface ProductTrendMatch {
 
 export function matchProductWithTrends(
   product: ProductData,
-  trends: TrendKeyword[]
+  trends: TrendKeyword[],
 ): ProductTrendMatch {
   const title = product.title.toLowerCase();
 
@@ -23,10 +23,7 @@ export function matchProductWithTrends(
     const words = keyword.split(" ");
 
     for (const word of words) {
-      if (
-        word.length > 2 &&
-        title.includes(word)
-      ) {
+      if (word.length > 2 && title.includes(word)) {
         score += 20;
 
         matchedKeywords.push(word);

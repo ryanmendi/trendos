@@ -79,6 +79,17 @@ export async function collectAmazonProducts(): Promise<ProductData[]> {
       url: "https://amazon.com/teclado",
       store: "Amazon",
     },
+    {
+      title: "lava louça portátil",
+      price: 299.9,
+      oldPrice: 599.9,
+      discount: 50,
+      rating: 4.7,
+      reviews: 8000,
+      image: "https://image.com/lava.jpg",
+      url: "https://amazon.com/lava",
+      store: "Amazon",
+    },
 
   ];
 }

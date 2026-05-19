@@ -3,6 +3,9 @@ import { saveProducts } from "./services/product.service";
 import { collectGoogleTrends } from "./collectors/trends/google-trends.collector";
 import { analyzeTrendKeyword } from "./engines/trend-intelligence.engine";
 import { matchProductWithTrends } from "./engines/product-trend-match.engine";
+import { calculatePostingPriority } from "./engines/smart-posting.engine";
+import { calculateViralScore } from "./engines/viral-score.engine";
+import { analyzeTrend } from "./engines/trend-hunter.engine";
 
 
 async function main() {
@@ -39,6 +42,42 @@ for (const product of products) {
     keywords: match.matchedKeywords,
   });
 }
+
+console.log("\n=== SMART POSTING ENGINE ===");
+
+const ranking = [];
+
+for (const product of products) {
+  const analysis = calculateViralScore(product);
+
+  const trendAnalysis = analyzeTrend(product);
+
+  const match = matchProductWithTrends(
+    product,
+    trends
+  );
+
+  const priority = calculatePostingPriority({
+    title: product.title,
+
+    viralScore: analysis.viralScore,
+    trendScore: trendAnalysis.trendScore,
+    growthScore: trendAnalysis.growthScore,
+    saturationLevel: trendAnalysis.saturationLevel,
+
+    matchScore: match.matchScore,
+  });
+
+  ranking.push(priority);
+}
+
+ranking.sort(
+  (a, b) => b.finalScore - a.finalScore
+);
+
+console.log("\n=== RANKING FINAL ===");
+
+console.table(ranking);
 
   console.log("Finalizado.");
 }
