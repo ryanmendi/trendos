@@ -7,6 +7,7 @@ import { calculatePostingPriority } from "./engines/smart-posting.engine";
 import { calculateViralScore } from "./engines/viral-score.engine";
 import { analyzeTrend } from "./engines/trend-hunter.engine";
 import { sendTelegramMessage } from "./services/telegram.service";
+import { generateProductContent } from "./engines/hook-generator.engine";
 
 
 async function main() {
@@ -87,15 +88,16 @@ for (const item of ranking) {
     item.priority === "CRÍTICA" ||
     item.priority === "Alta"
   ) {
-    await sendTelegramMessage(
-      `
-🔥 <b>${item.title}</b>
+const content = generateProductContent({
+  title: item.title,
+  price: 99,
+  discount: 40,
+  rating: 4.8,
+  url: "",
+  store: "Amazon",
+});
 
-⭐ Score: ${item.finalScore}
-
-🚀 Prioridade: ${item.priority}
-      `
-    );
+await sendTelegramMessage(content.caption);
 
     console.log("Enviado:", item.title);
   }
