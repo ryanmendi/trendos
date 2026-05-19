@@ -18,7 +18,7 @@ import { detectTrendExplosion } from "./engines/explosion-detector.engine";
 import { analyzeOpportunity } from "./engines/viral-opportunity.engine";
 import { collectCompetitorVideos } from "./collectors/competitors/tiktok-competitor.collector";
 import { analyzeCompetitorVideo } from "./engines/competitor-analysis.engine";
-
+import { extractViralStructure } from "./engines/viral-structure.engine";
 
 async function main() {
   console.log("TrendOS iniciado");
@@ -40,251 +40,218 @@ async function main() {
   }
 
   for (const trend of trends) {
-  await saveTrendSnapshot(trend);
-}
+    await saveTrendSnapshot(trend);
+  }
 
+  console.log("\n=== EXPLOSION DETECTION ===");
 
-console.log("\n=== EXPLOSION DETECTION ===");
+  for (const trend of trends) {
+    const explosion = await detectTrendExplosion(trend.keyword);
 
-for (const trend of trends) {
-  const explosion =
-    await detectTrendExplosion(
-      trend.keyword
-    );
+    console.log(explosion);
+  }
 
-  console.log(explosion);
-}
+  console.log("\n=== VIRAL OPPORTUNITIES ===");
 
+  for (const product of products) {
+    const viral = calculateViralScore(product);
 
-console.log("\n=== VIRAL OPPORTUNITIES ===");
+    const trend = analyzeTrend(product);
 
-for (const product of products) {
-  const viral =
-    calculateViralScore(product);
+    const match = matchProductWithTrends(product, trends);
 
-  const trend =
-    analyzeTrend(product);
-
-  const match =
-    matchProductWithTrends(
-      product,
-      trends
-    );
-
-
-  const opportunity =
-    analyzeOpportunity({
+    const opportunity = analyzeOpportunity({
       title: product.title,
 
       viralScore: viral.viralScore,
 
       trendScore: trend.trendScore,
 
-      growthScore:
-        trend.growthScore,
+      growthScore: trend.growthScore,
 
-      saturationLevel:
-        trend.saturationLevel,
+      saturationLevel: trend.saturationLevel,
 
-      matchScore:
-        match.matchScore,
+      matchScore: match.matchScore,
 
       price: product.price,
     });
 
-  console.log(opportunity);
-}
+    console.log(opportunity);
+  }
 
+  console.log("\n=== COMPETITOR INTELLIGENCE ===");
 
+  const competitorVideos = await collectCompetitorVideos();
 
-console.log(
-  "\n=== COMPETITOR INTELLIGENCE ==="
-);
+  for (const video of competitorVideos) {
+    const analysis = analyzeCompetitorVideo(video);
 
-const competitorVideos =
-  await collectCompetitorVideos();
+    console.log({
+      creator: analysis.creator,
 
-for (const video of competitorVideos) {
-  const analysis =
-    analyzeCompetitorVideo(video);
+      engagement: analysis.engagementRate,
 
-  console.log({
-    creator: analysis.creator,
+      hookStrength: analysis.hookStrength,
 
-    engagement:
-      analysis.engagementRate,
+      format: analysis.formatPotential,
 
-    hookStrength:
-      analysis.hookStrength,
+      viral: analysis.viralScore,
+    });
+  }
 
-    format:
-      analysis.formatPotential,
+  console.log("\n=== VIRAL STRUCTURE CLONER ===");
 
-    viral:
-      analysis.viralScore,
-  });
-}
+  for (const video of competitorVideos) {
+    const structure = extractViralStructure(video);
+
+    console.log({
+      structure: structure.structureName,
+
+      hook: structure.hookPattern,
+
+      triggers: structure.emotionalTriggers,
+
+      cta: structure.ctaStyle,
+
+      viral: structure.estimatedViralScore,
+    });
+  }
 
   console.log("\n=== PRODUCT TREND MATCH ===");
 
-for (const product of products) {
-  const match = matchProductWithTrends(
-    product,
-    trends
-  );
+  for (const product of products) {
+    const match = matchProductWithTrends(product, trends);
 
-  console.log({
-    product: product.title,
-    matched: match.matched,
-    score: match.matchScore,
-    keywords: match.matchedKeywords,
-  });
-}
-
-console.log("\n=== SMART POSTING ENGINE ===");
-
-const ranking = [];
-
-for (const product of products) {
-  const analysis = calculateViralScore(product);
-
-  const trendAnalysis = analyzeTrend(product);
-
-  const match = matchProductWithTrends(
-    product,
-    trends
-  );
-
-  const priority = calculatePostingPriority({
-    title: product.title,
-
-    viralScore: analysis.viralScore,
-    trendScore: trendAnalysis.trendScore,
-    growthScore: trendAnalysis.growthScore,
-    saturationLevel: trendAnalysis.saturationLevel,
-
-    matchScore: match.matchScore,
-  });
-
-  ranking.push(priority);
-}
-
-ranking.sort(
-  (a, b) => b.finalScore - a.finalScore
-);
-
-console.log("\n=== RANKING FINAL ===");
-
-console.table(ranking);
-
-console.log("\n=== CONTENT OPTIMIZATION ===");
-
-const bestProduct = products[0];
-
-const variants =
-  generateContentVariants(bestProduct);
-
-console.log(
-  "\n=== TOP 5 VARIANTES ==="
-);
-
-console.table(
-  variants.slice(0, 5).map((v) => ({
-    hook: v.hook,
-    cta: v.cta,
-    score: v.predictedScore,
-  }))
-);
-
-console.log("\n=== LEARNING SYSTEM ===");
-
-for (const variant of variants.slice(0, 5)) {
-  const metrics = simulatePerformance(
-    variant.predictedScore
-  );
-
-  await saveContentPerformance({
-    productTitle: bestProduct.title,
-
-    hook: variant.hook,
-    cta: variant.cta,
-
-    predictedScore: variant.predictedScore,
-
-    views: metrics.views,
-    clicks: metrics.clicks,
-    sales: metrics.sales,
-
-    engagementRate:
-      metrics.engagementRate,
-  });
-
-  console.log({
-    hook: variant.hook,
-    views: metrics.views,
-    clicks: metrics.clicks,
-    sales: metrics.sales,
-    engagement: metrics.engagementRate,
-  });
-}
-
-console.log("\n=== VIRAL PATTERN ANALYSIS ===");
-
-for (const variant of variants.slice(0, 3)) {
-  const analysis = analyzeViralPattern(
-    variant.caption
-  );
-
-  console.log({
-    hook: variant.hook,
-
-    curiosity: analysis.curiosityScore,
-
-    urgency: analysis.urgencyScore,
-
-    emotional: analysis.emotionalScore,
-
-    viralStructure:
-      analysis.viralStructureScore,
-
-    finalScore:
-      analysis.finalPatternScore,
-  });
-}
-
-console.log("\n=== ENVIANDO PARA TELEGRAM ===");
-
-for (const item of ranking) {
-  if (
-    item.priority === "CRÍTICA" ||
-    item.priority === "Alta"
-  ) {
-const content  = await generateProductContent({
-  title: item.title,
-  price: 99,
-  discount: 40,
-  rating: 4.8,
-  url: "",
-  store: "Amazon",
-});
-
-await sendTelegramMessage(content.caption);
-
-    console.log("Enviado:", item.title);
+    console.log({
+      product: product.title,
+      matched: match.matched,
+      score: match.matchScore,
+      keywords: match.matchedKeywords,
+    });
   }
-}
+
+  console.log("\n=== SMART POSTING ENGINE ===");
+
+  const ranking = [];
+
+  for (const product of products) {
+    const analysis = calculateViralScore(product);
+
+    const trendAnalysis = analyzeTrend(product);
+
+    const match = matchProductWithTrends(product, trends);
+
+    const priority = calculatePostingPriority({
+      title: product.title,
+
+      viralScore: analysis.viralScore,
+      trendScore: trendAnalysis.trendScore,
+      growthScore: trendAnalysis.growthScore,
+      saturationLevel: trendAnalysis.saturationLevel,
+
+      matchScore: match.matchScore,
+    });
+
+    ranking.push(priority);
+  }
+
+  ranking.sort((a, b) => b.finalScore - a.finalScore);
+
+  console.log("\n=== RANKING FINAL ===");
+
+  console.table(ranking);
+
+  console.log("\n=== CONTENT OPTIMIZATION ===");
+
+  const bestProduct = products[0];
+
+  const variants = generateContentVariants(bestProduct);
+
+  console.log("\n=== TOP 5 VARIANTES ===");
+
+  console.table(
+    variants.slice(0, 5).map((v) => ({
+      hook: v.hook,
+      cta: v.cta,
+      score: v.predictedScore,
+    })),
+  );
+
+  console.log("\n=== LEARNING SYSTEM ===");
+
+  for (const variant of variants.slice(0, 5)) {
+    const metrics = simulatePerformance(variant.predictedScore);
+
+    await saveContentPerformance({
+      productTitle: bestProduct.title,
+
+      hook: variant.hook,
+      cta: variant.cta,
+
+      predictedScore: variant.predictedScore,
+
+      views: metrics.views,
+      clicks: metrics.clicks,
+      sales: metrics.sales,
+
+      engagementRate: metrics.engagementRate,
+    });
+
+    console.log({
+      hook: variant.hook,
+      views: metrics.views,
+      clicks: metrics.clicks,
+      sales: metrics.sales,
+      engagement: metrics.engagementRate,
+    });
+  }
+
+  console.log("\n=== VIRAL PATTERN ANALYSIS ===");
+
+  for (const variant of variants.slice(0, 3)) {
+    const analysis = analyzeViralPattern(variant.caption);
+
+    console.log({
+      hook: variant.hook,
+
+      curiosity: analysis.curiosityScore,
+
+      urgency: analysis.urgencyScore,
+
+      emotional: analysis.emotionalScore,
+
+      viralStructure: analysis.viralStructureScore,
+
+      finalScore: analysis.finalPatternScore,
+    });
+  }
+
+  console.log("\n=== ENVIANDO PARA TELEGRAM ===");
+
+  for (const item of ranking) {
+    if (item.priority === "CRÍTICA" || item.priority === "Alta") {
+      const content = await generateProductContent({
+        title: item.title,
+        price: 99,
+        discount: 40,
+        rating: 4.8,
+        url: "",
+        store: "Amazon",
+      });
+
+      await sendTelegramMessage(content.caption);
+
+      console.log("Enviado:", item.title);
+    }
+  }
 
   console.log("Finalizado.");
 
   console.log("\n=== SELF OPTIMIZATION ===");
 
-const bestHooks = await findBestHooks();
+  const bestHooks = await findBestHooks();
 
-console.table(
-  bestHooks.slice(0, 5)
-);
+  console.table(bestHooks.slice(0, 5));
 }
-
-
 
 main();
