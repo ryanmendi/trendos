@@ -13,6 +13,9 @@ import { saveContentPerformance } from "./services/learning.service";
 import { simulatePerformance } from "./utils/performance-simulator";
 import { findBestHooks } from "./engines/self-optimization.engine";
 import { analyzeViralPattern } from "./engines/viral-pattern.engine";
+import { saveTrendSnapshot } from "./services/trend-monitor.service";
+import { detectTrendExplosion } from "./engines/explosion-detector.engine";
+import { analyzeOpportunity } from "./engines/viral-opportunity.engine";
 
 
 async function main() {
@@ -33,6 +36,61 @@ async function main() {
 
     console.log(result);
   }
+
+  for (const trend of trends) {
+  await saveTrendSnapshot(trend);
+}
+
+
+console.log("\n=== EXPLOSION DETECTION ===");
+
+for (const trend of trends) {
+  const explosion =
+    await detectTrendExplosion(
+      trend.keyword
+    );
+
+  console.log(explosion);
+}
+
+
+console.log("\n=== VIRAL OPPORTUNITIES ===");
+
+for (const product of products) {
+  const viral =
+    calculateViralScore(product);
+
+  const trend =
+    analyzeTrend(product);
+
+  const match =
+    matchProductWithTrends(
+      product,
+      trends
+    );
+
+  const opportunity =
+    analyzeOpportunity({
+      title: product.title,
+
+      viralScore: viral.viralScore,
+
+      trendScore: trend.trendScore,
+
+      growthScore:
+        trend.growthScore,
+
+      saturationLevel:
+        trend.saturationLevel,
+
+      matchScore:
+        match.matchScore,
+
+      price: product.price,
+    });
+
+  console.log(opportunity);
+}
 
   console.log("\n=== PRODUCT TREND MATCH ===");
 
