@@ -1,4 +1,5 @@
 import { ProductData } from "../types/product";
+import { getBestPerformingHooks } from "./adaptive-hook.engine";
 
 const hooks = [
   "TikTok está enlouquecendo com isso 🔥",
@@ -22,11 +23,24 @@ export interface GeneratedContent {
   caption: string;
 }
 
-export function generateProductContent(
+export async function generateProductContent(
   product: ProductData
 ): GeneratedContent {
-  const randomHook =
-    hooks[Math.floor(Math.random() * hooks.length)];
+const adaptiveHooks =
+  await getBestPerformingHooks();
+
+const prioritizedHooks = [
+  ...adaptiveHooks.map((h) => h.hook),
+  ...hooks,
+];
+
+const randomHook =
+  prioritizedHooks[
+    Math.floor(
+      Math.random() *
+        prioritizedHooks.length
+    )
+  ];
 
   const randomCTA =
     ctas[Math.floor(Math.random() * ctas.length)];

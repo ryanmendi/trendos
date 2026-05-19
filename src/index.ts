@@ -9,6 +9,9 @@ import { analyzeTrend } from "./engines/trend-hunter.engine";
 import { sendTelegramMessage } from "./services/telegram.service";
 import { generateProductContent } from "./engines/hook-generator.engine";
 import { generateContentVariants } from "./engines/content-optimizer.engine";
+import { saveContentPerformance } from "./services/learning.service";
+import { simulatePerformance } from "./utils/performance-simulator";
+import { findBestHooks } from "./engines/self-optimization.engine";
 
 
 async function main() {
@@ -101,6 +104,38 @@ console.table(
   }))
 );
 
+console.log("\n=== LEARNING SYSTEM ===");
+
+for (const variant of variants.slice(0, 5)) {
+  const metrics = simulatePerformance(
+    variant.predictedScore
+  );
+
+  await saveContentPerformance({
+    productTitle: bestProduct.title,
+
+    hook: variant.hook,
+    cta: variant.cta,
+
+    predictedScore: variant.predictedScore,
+
+    views: metrics.views,
+    clicks: metrics.clicks,
+    sales: metrics.sales,
+
+    engagementRate:
+      metrics.engagementRate,
+  });
+
+  console.log({
+    hook: variant.hook,
+    views: metrics.views,
+    clicks: metrics.clicks,
+    sales: metrics.sales,
+    engagement: metrics.engagementRate,
+  });
+}
+
 console.log("\n=== ENVIANDO PARA TELEGRAM ===");
 
 for (const item of ranking) {
@@ -108,7 +143,7 @@ for (const item of ranking) {
     item.priority === "CRÍTICA" ||
     item.priority === "Alta"
   ) {
-const content = generateProductContent({
+const content  = await generateProductContent({
   title: item.title,
   price: 99,
   discount: 40,
@@ -124,6 +159,16 @@ await sendTelegramMessage(content.caption);
 }
 
   console.log("Finalizado.");
+
+  console.log("\n=== SELF OPTIMIZATION ===");
+
+const bestHooks = await findBestHooks();
+
+console.table(
+  bestHooks.slice(0, 5)
+);
 }
+
+
 
 main();

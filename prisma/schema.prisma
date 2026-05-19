@@ -33,3 +33,22 @@ model Product {
 
   createdAt   DateTime @default(now())
 }
+
+model ContentPerformance {
+  id String @id @default(cuid())
+
+  productTitle String
+
+  hook String
+  cta  String
+
+  predictedScore Float
+
+  views    Int?
+  clicks   Int?
+  sales    Int?
+
+  engagementRate Float?
+
+  createdAt DateTime @default(now())
+}
