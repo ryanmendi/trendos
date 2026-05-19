@@ -12,6 +12,7 @@ import { generateContentVariants } from "./engines/content-optimizer.engine";
 import { saveContentPerformance } from "./services/learning.service";
 import { simulatePerformance } from "./utils/performance-simulator";
 import { findBestHooks } from "./engines/self-optimization.engine";
+import { analyzeViralPattern } from "./engines/viral-pattern.engine";
 
 
 async function main() {
@@ -133,6 +134,30 @@ for (const variant of variants.slice(0, 5)) {
     clicks: metrics.clicks,
     sales: metrics.sales,
     engagement: metrics.engagementRate,
+  });
+}
+
+console.log("\n=== VIRAL PATTERN ANALYSIS ===");
+
+for (const variant of variants.slice(0, 3)) {
+  const analysis = analyzeViralPattern(
+    variant.caption
+  );
+
+  console.log({
+    hook: variant.hook,
+
+    curiosity: analysis.curiosityScore,
+
+    urgency: analysis.urgencyScore,
+
+    emotional: analysis.emotionalScore,
+
+    viralStructure:
+      analysis.viralStructureScore,
+
+    finalScore:
+      analysis.finalPatternScore,
   });
 }
 
