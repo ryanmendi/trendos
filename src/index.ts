@@ -2,6 +2,8 @@ import { collectAmazonProducts } from "./collectors/amazon/amazon.collector";
 import { saveProducts } from "./services/product.service";
 import { collectGoogleTrends } from "./collectors/trends/google-trends.collector";
 import { analyzeTrendKeyword } from "./engines/trend-intelligence.engine";
+import { matchProductWithTrends } from "./engines/product-trend-match.engine";
+
 
 async function main() {
   console.log("TrendOS iniciado");
@@ -21,6 +23,22 @@ async function main() {
 
     console.log(result);
   }
+
+  console.log("\n=== PRODUCT TREND MATCH ===");
+
+for (const product of products) {
+  const match = matchProductWithTrends(
+    product,
+    trends
+  );
+
+  console.log({
+    product: product.title,
+    matched: match.matched,
+    score: match.matchScore,
+    keywords: match.matchedKeywords,
+  });
+}
 
   console.log("Finalizado.");
 }
