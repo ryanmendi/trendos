@@ -16,6 +16,8 @@ import { analyzeViralPattern } from "./engines/viral-pattern.engine";
 import { saveTrendSnapshot } from "./services/trend-monitor.service";
 import { detectTrendExplosion } from "./engines/explosion-detector.engine";
 import { analyzeOpportunity } from "./engines/viral-opportunity.engine";
+import { collectCompetitorVideos } from "./collectors/competitors/tiktok-competitor.collector";
+import { analyzeCompetitorVideo } from "./engines/competitor-analysis.engine";
 
 
 async function main() {
@@ -69,6 +71,7 @@ for (const product of products) {
       trends
     );
 
+
   const opportunity =
     analyzeOpportunity({
       title: product.title,
@@ -90,6 +93,36 @@ for (const product of products) {
     });
 
   console.log(opportunity);
+}
+
+
+
+console.log(
+  "\n=== COMPETITOR INTELLIGENCE ==="
+);
+
+const competitorVideos =
+  await collectCompetitorVideos();
+
+for (const video of competitorVideos) {
+  const analysis =
+    analyzeCompetitorVideo(video);
+
+  console.log({
+    creator: analysis.creator,
+
+    engagement:
+      analysis.engagementRate,
+
+    hookStrength:
+      analysis.hookStrength,
+
+    format:
+      analysis.formatPotential,
+
+    viral:
+      analysis.viralScore,
+  });
 }
 
   console.log("\n=== PRODUCT TREND MATCH ===");
