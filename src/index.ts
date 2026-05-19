@@ -1,5 +1,7 @@
 import { collectAmazonProducts } from "./collectors/amazon/amazon.collector";
 import { saveProducts } from "./services/product.service";
+import { collectGoogleTrends } from "./collectors/trends/google-trends.collector";
+import { analyzeTrendKeyword } from "./engines/trend-intelligence.engine";
 
 async function main() {
   console.log("TrendOS iniciado");
@@ -10,9 +12,17 @@ async function main() {
 
   await saveProducts(products);
 
-  console.log("Finalizado.");
+  const trends = await collectGoogleTrends();
 
-  
+  console.log("\n=== GOOGLE TRENDS ===");
+
+  for (const trend of trends) {
+    const result = analyzeTrendKeyword(trend);
+
+    console.log(result);
+  }
+
+  console.log("Finalizado.");
 }
 
 main();
