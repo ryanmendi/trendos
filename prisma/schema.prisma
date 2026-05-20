@@ -54,12 +54,13 @@ model ContentPerformance {
 }
 
 model TrendSnapshot {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
 
-  keyword String
+  keyword   String
 
-  searchVolume Int
-  growthPercentage Float
+  value     Float?
+
+  growth    Float?
 
   createdAt DateTime @default(now())
 }
