@@ -2,6 +2,8 @@ import { logger } from "../lib/logger";
 import { collectRealGoogleTrends } from "../collectors/trends/google-trends-real.collector";
 import { analyzeRealTrendGrowth } from "../engines/real-trend-growth.engine";
 import { saveTrendSnapshots } from "../services/trend-memory.service";
+import { predictTrendExplosion } from "../engines/explosion-prediction.engine";
+import { rankTrendOpportunities } from "../engines/opportunity-ranking.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -40,5 +42,29 @@ logger.info(
 
 await saveTrendSnapshots(
   growthAnalysis
+);
+
+logger.info(
+  "Predicting trend explosions"
+);
+
+const predictions =
+  predictTrendExplosion(
+    growthAnalysis
+  );
+
+console.table(predictions);
+
+logger.info(
+  "Ranking opportunities"
+);
+
+const rankedOpportunities =
+  rankTrendOpportunities(
+    predictions
+  );
+
+console.table(
+  rankedOpportunities
 );
 }
