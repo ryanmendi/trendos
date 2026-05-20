@@ -19,6 +19,8 @@ import { analyzeOpportunity } from "./engines/viral-opportunity.engine";
 import { collectCompetitorVideos } from "./collectors/competitors/tiktok-competitor.collector";
 import { analyzeCompetitorVideo } from "./engines/competitor-analysis.engine";
 import { extractViralStructure } from "./engines/viral-structure.engine";
+import { generateViralScript } from "./engines/script-generator.engine";
+import { planVideoScenes } from "./engines/video-scene-planner.engine";
 
 async function main() {
   console.log("TrendOS iniciado");
@@ -116,6 +118,48 @@ async function main() {
       viral: structure.estimatedViralScore,
     });
   }
+
+  console.log(
+  "\n=== AI SCRIPT GENERATOR ==="
+);
+
+const selectedProduct = products[0];
+
+const selectedVideo =
+  competitorVideos[0];
+
+const selectedStructure =
+  extractViralStructure(
+    selectedVideo
+  );
+
+const script =
+  generateViralScript(
+    selectedProduct,
+    selectedStructure
+  );
+
+console.log({
+  title: script.title,
+
+  hook: script.hook,
+
+  scenes: script.scenes,
+
+  cta: script.cta,
+
+  retention:
+    script.estimatedRetention,
+});
+
+console.log(
+  "\n=== VIDEO SCENE PLANNER ==="
+);
+
+const plannedScenes =
+  planVideoScenes(script);
+
+console.table(plannedScenes);
 
   console.log("\n=== PRODUCT TREND MATCH ===");
 
