@@ -7,6 +7,9 @@ import { rankTrendOpportunities } from "../engines/opportunity-ranking.engine";
 import { buildSmartQueue } from "../engines/smart-queue.engine";
 import { generateHooks } from "../engines/hook-generation.engine";
 import { generateScripts } from "../engines/script-generation.engine";
+import { generateCaptions } from "../engines/ai-caption.engine";
+import {  analyzeCompetitors } from "../engines/competitor-intelligence.engine";
+import {  competitorVideos } from "../mocks/competitor-videos";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -111,4 +114,28 @@ const scripts =
   generateScripts(hooks);
 
 console.table(scripts);
+
+logger.info(
+  "Generating captions"
+);
+
+const captions =
+  generateCaptions(
+    scripts
+  );
+
+console.table(captions);
+
+logger.info(
+  "Analyzing competitors"
+);
+
+const competitorInsights =
+  analyzeCompetitors(
+    competitorVideos
+  );
+
+console.table(
+  competitorInsights
+);
 }
