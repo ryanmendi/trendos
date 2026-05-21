@@ -6,6 +6,7 @@ import { predictTrendExplosion } from "../engines/explosion-prediction.engine";
 import { rankTrendOpportunities } from "../engines/opportunity-ranking.engine";
 import { buildSmartQueue } from "../engines/smart-queue.engine";
 import { generateHooks } from "../engines/hook-generation.engine";
+import { generateScripts } from "../engines/script-generation.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -102,4 +103,12 @@ const hooks =
   );
 
 console.table(hooks);
+logger.info(
+  "Generating scripts"
+);
+
+const scripts =
+  generateScripts(hooks);
+
+console.table(scripts);
 }
