@@ -4,6 +4,7 @@ import { analyzeRealTrendGrowth } from "../engines/real-trend-growth.engine";
 import { saveTrendSnapshots } from "../services/trend-memory.service";
 import { predictTrendExplosion } from "../engines/explosion-prediction.engine";
 import { rankTrendOpportunities } from "../engines/opportunity-ranking.engine";
+import { buildSmartQueue } from "../engines/smart-queue.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -20,6 +21,17 @@ export async function runTrendOS() {
 
 const realTrends =
   await collectRealGoogleTrends();
+
+if (
+  !realTrends ||
+  realTrends.length === 0
+) {
+  logger.warn(
+    "No trend data collected"
+  );
+
+  return;
+}
 
 console.table(realTrends);
 
@@ -67,4 +79,15 @@ const rankedOpportunities =
 console.table(
   rankedOpportunities
 );
+
+logger.info(
+  "Building smart queue"
+);
+
+const smartQueue =
+  buildSmartQueue(
+    rankedOpportunities
+  );
+
+console.table(smartQueue);
 }
