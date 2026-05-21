@@ -5,6 +5,7 @@ import { saveTrendSnapshots } from "../services/trend-memory.service";
 import { predictTrendExplosion } from "../engines/explosion-prediction.engine";
 import { rankTrendOpportunities } from "../engines/opportunity-ranking.engine";
 import { buildSmartQueue } from "../engines/smart-queue.engine";
+import { generateHooks } from "../engines/hook-generation.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -90,4 +91,15 @@ const smartQueue =
   );
 
 console.table(smartQueue);
+
+logger.info(
+  "Generating viral hooks"
+);
+
+const hooks =
+  generateHooks(
+    smartQueue
+  );
+
+console.table(hooks);
 }
