@@ -9,7 +9,7 @@ export function startScheduler() {
     "Scheduler started"
   );
 
-  cron.schedule("*/2 * * * *", async () => {
+  cron.schedule("*/1q * * * *", async () => {
     logger.info(
       "Running automated TrendOS cycle"
     );

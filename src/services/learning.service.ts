@@ -1,24 +1,71 @@
-import { prisma } from "../database/prisma";
+import { prisma }
+from "../lib/prisma";
 
-interface SavePerformanceData {
-  productTitle: string;
+import { GeneratedScript }
+from "../engines/script-generation.engine";
 
-  hook: string;
-  cta: string;
+import { RetentionAnalysis }
+from "../engines/retention-optimization.engine";
 
-  predictedScore: number;
+export async function saveLearningData(
+  scripts: GeneratedScript[],
 
-  views?: number;
-  clicks?: number;
-  sales?: number;
-
-  engagementRate?: number;
-}
-
-export async function saveContentPerformance(
-  data: SavePerformanceData
+  retention:
+    RetentionAnalysis[]
 ) {
-  return prisma.contentPerformance.create({
-    data,
-  });
+
+  for (const script of scripts) {
+
+    const retentionData =
+      retention.find(
+        (r) =>
+          r.keyword ===
+          script.keyword
+      );
+
+    await prisma.contentPerformance.create({
+      data: {
+        keyword:
+          script.keyword,
+
+        hook:
+          script.hook,
+
+        cta:
+          script.cta,
+
+        retentionScore:
+          retentionData
+            ?.retentionScore || 0,
+
+        // MOCKS por enquanto
+        views:
+          Math.floor(
+            Math.random() *
+            100000
+          ),
+
+        likes:
+          Math.floor(
+            Math.random() *
+            10000
+          ),
+
+        comments:
+          Math.floor(
+            Math.random() *
+            1000
+          ),
+
+        shares:
+          Math.floor(
+            Math.random() *
+            5000
+          ),
+
+        watchTime:
+          Math.random() * 100,
+      },
+    });
+  }
 }

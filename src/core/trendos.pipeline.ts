@@ -11,6 +11,9 @@ import { generateCaptions } from "../engines/ai-caption.engine";
 import {  analyzeCompetitors } from "../engines/competitor-intelligence.engine";
 import {  competitorVideos } from "../mocks/competitor-videos";
 import {  optimizeRetention } from "../engines/retention-optimization.engine";
+import {  saveLearningData } from "../services/learning.service";
+import { analyzeLearning } from "../engines/learning-analytics.engine";
+import { makeAIDecisions } from "../engines/ai-decision.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -151,5 +154,43 @@ const retentionAnalysis =
 
 console.table(
   retentionAnalysis
+);
+
+logger.info(
+  "Saving learning data"
+);
+
+await saveLearningData(
+  scripts,
+  retentionAnalysis
+);
+
+logger.info(
+  "Analyzing learning data"
+);
+
+const learningInsights =
+  await analyzeLearning();
+
+console.dir(
+  learningInsights,
+  {
+    depth: null,
+    colors: true,
+  }
+);
+
+logger.info(
+  "Running AI decisions"
+);
+
+const decisions =
+  makeAIDecisions(
+    rankedOpportunities,
+    retentionAnalysis
+  );
+
+console.table(
+  decisions
 );
 }

@@ -35,22 +35,27 @@ model Product {
 }
 
 model ContentPerformance {
-  id String @id @default(cuid())
+  id              String   @id @default(cuid())
 
-  productTitle String
+  keyword         String?
 
-  hook String
-  cta  String
+  hook            String
 
-  predictedScore Float
+  cta             String
 
-  views    Int?
-  clicks   Int?
-  sales    Int?
+  retentionScore  Float?
 
-  engagementRate Float?
+  views           Int?
 
-  createdAt DateTime @default(now())
+  likes           Int?
+
+  comments        Int?
+
+  shares          Int?
+
+  watchTime       Float?
+
+  createdAt       DateTime @default(now())
 }
 
 model TrendSnapshot {
