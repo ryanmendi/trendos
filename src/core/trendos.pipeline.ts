@@ -8,12 +8,13 @@ import { buildSmartQueue } from "../engines/smart-queue.engine";
 import { generateHooks } from "../engines/hook-generation.engine";
 import { generateScripts } from "../engines/script-generation.engine";
 import { generateCaptions } from "../engines/ai-caption.engine";
-import {  analyzeCompetitors } from "../engines/competitor-intelligence.engine";
-import {  competitorVideos } from "../mocks/competitor-videos";
-import {  optimizeRetention } from "../engines/retention-optimization.engine";
-import {  saveLearningData } from "../services/learning.service";
+import { analyzeCompetitors } from "../engines/competitor-intelligence.engine";
+import { competitorVideos } from "../mocks/competitor-videos";
+import { optimizeRetention } from "../engines/retention-optimization.engine";
+import { saveLearningData } from "../services/learning.service";
 import { analyzeLearning } from "../engines/learning-analytics.engine";
 import { makeAIDecisions } from "../engines/ai-decision.engine";
+import { adaptToPlatforms } from "../engines/multi-platform.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -192,5 +193,22 @@ const decisions =
 
 console.table(
   decisions
+);
+
+logger.info(
+  "Adapting content to platforms"
+);
+
+const platformContent =
+  adaptToPlatforms(
+    captions
+  );
+
+console.dir(
+  platformContent,
+  {
+    depth: null,
+    colors: true,
+  }
 );
 }
