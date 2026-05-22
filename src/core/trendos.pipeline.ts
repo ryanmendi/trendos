@@ -10,6 +10,7 @@ import { generateScripts } from "../engines/script-generation.engine";
 import { generateCaptions } from "../engines/ai-caption.engine";
 import {  analyzeCompetitors } from "../engines/competitor-intelligence.engine";
 import {  competitorVideos } from "../mocks/competitor-videos";
+import {  optimizeRetention } from "../engines/retention-optimization.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -137,5 +138,18 @@ const competitorInsights =
 
 console.table(
   competitorInsights
+);
+
+logger.info(
+  "Optimizing retention"
+);
+
+const retentionAnalysis =
+  optimizeRetention(
+    scripts
+  );
+
+console.table(
+  retentionAnalysis
 );
 }
