@@ -17,6 +17,7 @@ import { makeAIDecisions } from "../engines/ai-decision.engine";
 import { adaptToPlatforms } from "../engines/multi-platform.engine";
 import { buildVideoStructures } from "../engines/video-assembly.engine";
 import { generateVisualDirection } from "../engines/visual-direction.engine";
+import { generateVoiceDirection } from "../engines/ai-voice.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -242,6 +243,23 @@ const visualDirections =
 
 console.dir(
   visualDirections,
+  {
+    depth: null,
+    colors: true,
+  }
+);
+
+logger.info(
+  "Generating voice direction"
+);
+
+const voiceDirections =
+  generateVoiceDirection(
+    videoStructures
+  );
+
+console.dir(
+  voiceDirections,
   {
     depth: null,
     colors: true,
