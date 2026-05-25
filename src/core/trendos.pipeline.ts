@@ -16,6 +16,7 @@ import { analyzeLearning } from "../engines/learning-analytics.engine";
 import { makeAIDecisions } from "../engines/ai-decision.engine";
 import { adaptToPlatforms } from "../engines/multi-platform.engine";
 import { buildVideoStructures } from "../engines/video-assembly.engine";
+import { generateVisualDirection } from "../engines/visual-direction.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -224,6 +225,23 @@ const videoStructures =
 
 console.dir(
   videoStructures,
+  {
+    depth: null,
+    colors: true,
+  }
+);
+
+logger.info(
+  "Generating visual direction"
+);
+
+const visualDirections =
+  generateVisualDirection(
+    videoStructures
+  );
+
+console.dir(
+  visualDirections,
   {
     depth: null,
     colors: true,
