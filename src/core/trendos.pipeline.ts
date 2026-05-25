@@ -15,6 +15,7 @@ import { saveLearningData } from "../services/learning.service";
 import { analyzeLearning } from "../engines/learning-analytics.engine";
 import { makeAIDecisions } from "../engines/ai-decision.engine";
 import { adaptToPlatforms } from "../engines/multi-platform.engine";
+import { buildVideoStructures } from "../engines/video-assembly.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -206,6 +207,23 @@ const platformContent =
 
 console.dir(
   platformContent,
+  {
+    depth: null,
+    colors: true,
+  }
+);
+
+logger.info(
+  "Building video structures"
+);
+
+const videoStructures =
+  buildVideoStructures(
+    scripts
+  );
+
+console.dir(
+  videoStructures,
   {
     depth: null,
     colors: true,
