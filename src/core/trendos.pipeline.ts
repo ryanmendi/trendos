@@ -18,6 +18,7 @@ import { adaptToPlatforms } from "../engines/multi-platform.engine";
 import { buildVideoStructures } from "../engines/video-assembly.engine";
 import { generateVisualDirection } from "../engines/visual-direction.engine";
 import { generateVoiceDirection } from "../engines/ai-voice.engine";
+import { renderTestVideo } from "../engines/ffmpeg-render.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -265,4 +266,10 @@ console.dir(
     colors: true,
   }
 );
+
+logger.info(
+  "Rendering test video"
+);
+
+await renderTestVideo();
 }
