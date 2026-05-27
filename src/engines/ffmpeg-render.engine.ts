@@ -5,32 +5,82 @@ ffmpeg.setFfmpegPath(
   "C:\\Users\\Mende\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe"
 );
 
-const inputPath = path.resolve(
-  __dirname,
-  "../../assets/test.mp4"
-);
+interface VideoScene {
+  text: string;
+  start: number;
+  end: number;
+}
 
-const outputPath = path.resolve(
-  __dirname,
-  "../../output/rendered.mp4"
-);
+function sanitizeText(
+  text: string
+) {
 
-export async function renderTestVideo() {
+  return text
+
+    .replace(/:/g, "\\:")
+
+    .replace(/'/g, "\\'")
+
+    .replace(/"/g, '\\"');
+}
+
+export async function renderTestVideo(
+  script: VideoScene[]
+) {
+
+  const inputPath =
+    path.resolve(
+      __dirname,
+      "../../assets/test.mp4"
+    );
+
+  const outputPath =
+    path.resolve(
+      __dirname,
+      "../../output/rendered.mp4"
+    );
+
+  const fontPath =
+    "assets/fonts/arial.ttf";
+
+  const filters: string[] = [];
+
+  filters.push(
+    "scale=720:1280"
+  );
+
+  for (const scene of script) {
+
+    const safeText =
+      sanitizeText(
+        scene.text
+      );
+
+    filters.push(
+
+      `drawtext=fontfile='${fontPath}':text='${safeText}':fontcolor=white:fontsize=42:box=1:boxcolor=black@0.6:boxborderw=20:x=(w-text_w)/2:y=h-250:enable='between(t,${scene.start},${scene.end})'`
+    );
+  }
 
   return new Promise(
     (resolve, reject) => {
 
       ffmpeg()
 
-        .input(inputPath)
+ffmpeg()
 
-        .videoFilters([
-          "scale=720:1280",
+  .input(inputPath)
 
-          "drawtext=fontfile='C\\:/Windows/Fonts/arial.ttf':text='Esse produto esta viralizando':fontcolor=white:fontsize=42:box=1:boxcolor=black@0.6:boxborderw=20:x=(w-text_w)/2:y=h-250"
-        ])
+  .complexFilter(
+    filters.join(",")
+  )
 
-        .output(outputPath)
+  .outputOptions([
+    "-preset fast",
+    "-pix_fmt yuv420p"
+  ])
+
+  .output(outputPath)
 
         .on(
           "start",

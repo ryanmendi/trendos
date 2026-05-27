@@ -19,6 +19,7 @@ import { buildVideoStructures } from "../engines/video-assembly.engine";
 import { generateVisualDirection } from "../engines/visual-direction.engine";
 import { generateVoiceDirection } from "../engines/ai-voice.engine";
 import { renderTestVideo } from "../engines/ffmpeg-render.engine";
+import { buildVideoScript } from "../engines/video-script.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -268,8 +269,34 @@ console.dir(
 );
 
 logger.info(
+  "Building video script"
+);
+
+const firstScript =
+  scripts[0];
+
+const videoScript =
+  buildVideoScript({
+
+    hook:
+      firstScript.hook,
+
+    body:
+      firstScript.body,
+
+    cta:
+      firstScript.cta
+  });
+
+console.table(
+  videoScript
+);
+
+logger.info(
   "Rendering test video"
 );
 
-await renderTestVideo();
+await renderTestVideo(
+  videoScript
+);
 }
