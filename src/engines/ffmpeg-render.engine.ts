@@ -24,10 +24,26 @@ export async function renderTestVideo() {
 
         .input(inputPath)
 
+        .videoFilters([
+          "scale=720:1280",
+
+          "drawtext=fontfile='C\\:/Windows/Fonts/arial.ttf':text='Esse produto esta viralizando':fontcolor=white:fontsize=42:box=1:boxcolor=black@0.6:boxborderw=20:x=(w-text_w)/2:y=h-250"
+        ])
+
         .output(outputPath)
 
-        .videoFilters(
-          "scale=720:1280"
+        .on(
+          "start",
+          (commandLine) => {
+
+            console.log(
+              "FFmpeg command:"
+            );
+
+            console.log(
+              commandLine
+            );
+          }
         )
 
         .on(
@@ -56,5 +72,3 @@ export async function renderTestVideo() {
     }
   );
 }
-
-
