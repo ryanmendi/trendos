@@ -1,5 +1,6 @@
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
+import fs from "fs";
 
 ffmpeg.setFfmpegPath(
   "C:\\Users\\Mende\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe"
@@ -14,20 +15,15 @@ interface VideoScene {
 function sanitizeText(
   text: string
 ) {
-
   return text
-
     .replace(/:/g, "\\:")
-
     .replace(/'/g, "\\'")
-
     .replace(/"/g, '\\"');
 }
 
 export async function renderTestVideo(
   script: VideoScene[]
 ) {
-
   const inputPath =
     path.resolve(
       __dirname,
@@ -40,11 +36,11 @@ export async function renderTestVideo(
       "../../output/rendered.mp4"
     );
 
-    const audioPath =
-  path.resolve(
-    __dirname,
-    "../../output/audio/teste.mp3"
-  );
+  const audioPath =
+    path.resolve(
+      __dirname,
+      "../../output/audio/teste.mp3"
+    );
 
   const fontPath =
     "assets/fonts/arial.ttf";
@@ -63,46 +59,52 @@ export async function renderTestVideo(
       );
 
     filters.push(
-
       `drawtext=fontfile='${fontPath}':text='${safeText}':fontcolor=white:fontsize=42:box=1:boxcolor=black@0.6:boxborderw=20:x=(w-text_w)/2:y=h-250:enable='between(t,${scene.start},${scene.end})'`
     );
   }
+
+  console.log(
+    "Audio exists:",
+    fs.existsSync(audioPath)
+  );
 
   return new Promise(
     (resolve, reject) => {
 
       ffmpeg()
 
-ffmpeg()
+        .input(inputPath)
 
-  .input(inputPath)
+        .input(audioPath)
 
-  .complexFilter(
-    filters.join(",")
-  )
+        .videoFilters(
+        filters.join(",")
+        )
 
-  .outputOptions([
+        .outputOptions([
+  "-map 0:v:0",
+  "-map 1:a:0",
+  "-c:v libx264",
+  "-c:a aac",
   "-preset fast",
   "-pix_fmt yuv420p",
   "-shortest"
+        ])
 
-  ])
-
-  .output(outputPath)
+        .output(outputPath)
 
         .on(
           "start",
           (commandLine) => {
 
             console.log(
-              "FFmpeg command:"
+              "Using audio:",
+              audioPath
             );
 
-
             console.log(
-  "Using audio:",
-  audioPath
-);
+              "FFmpeg command:"
+            );
 
             console.log(
               commandLine
