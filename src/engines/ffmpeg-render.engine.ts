@@ -1,6 +1,7 @@
 import ffmpeg from "fluent-ffmpeg";
 import path from "path";
 import fs from "fs";
+import { getBackgroundVideo } from "./background-video.engine";
 
 ffmpeg.setFfmpegPath(
   "C:\\Users\\Mende\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe"
@@ -24,11 +25,14 @@ function sanitizeText(
 export async function renderTestVideo(
   script: VideoScene[]
 ) {
-  const inputPath =
-    path.resolve(
-      __dirname,
-      "../../assets/test.mp4"
-    );
+
+  const keyword =
+  "tecnologia";
+
+ const inputPath =
+  getBackgroundVideo(
+    keyword 
+  );
 
   const outputPath =
     path.resolve(
@@ -104,6 +108,11 @@ export async function renderTestVideo(
 
             console.log(
               "FFmpeg command:"
+            );
+
+            console.log(
+              "Using background:",
+                inputPath
             );
 
             console.log(
