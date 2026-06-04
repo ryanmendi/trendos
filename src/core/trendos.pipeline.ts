@@ -19,6 +19,7 @@ import { buildVideoStructures } from "../engines/video-assembly.engine";
 import { generateVisualDirection } from "../engines/visual-direction.engine";
 import { generateVoiceDirection } from "../engines/ai-voice.engine";
 import { renderTestVideo } from "../engines/ffmpeg-render.engine";
+import { generateNarration } from "../engines/tts.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -272,4 +273,14 @@ logger.info(
 );
 
 await renderTestVideo();
+
+logger.info(
+  "Generating narration"
+);
+
+await generateNarration(
+  "teste",
+  "Olá Ryan, o TrendOS está funcionando perfeitamente."
+);
+
 }
