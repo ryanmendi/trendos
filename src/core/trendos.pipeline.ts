@@ -20,6 +20,7 @@ import { generateVisualDirection } from "../engines/visual-direction.engine";
 import { generateVoiceDirection } from "../engines/ai-voice.engine";
 import { renderTestVideo } from "../engines/ffmpeg-render.engine";
 import { generateNarration } from "../engines/tts.engine";
+import { buildVideoScript } from "../engines/video-script.engine";
 
 export async function runTrendOS() {
   logger.info("TrendOS Pipeline Started");
@@ -269,10 +270,27 @@ console.dir(
 );
 
 logger.info(
-  "Rendering test video"
+  "Building video script"
 );
 
-await renderTestVideo();
+const firstScript =
+  scripts[0];
+
+const videoScript =
+  buildVideoScript({
+    hook:
+      firstScript.hook,
+
+    body:
+      firstScript.body,
+
+    cta:
+      firstScript.cta
+  });
+
+console.table(
+  videoScript
+);
 
 logger.info(
   "Generating narration"
@@ -280,7 +298,23 @@ logger.info(
 
 await generateNarration(
   "teste",
-  "Olá Ryan, o TrendOS está funcionando perfeitamente."
+  [
+    firstScript.hook,
+    firstScript.body,
+    firstScript.cta
+  ].join(" ")
+);
+
+logger.info(
+  "Rendering test video"
+);
+
+await renderTestVideo(
+  videoScript
+);
+
+logger.info(
+  "Video pipeline completed"
 );
 
 }
